@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  banca_app:
+    container_name: banca_app
+    image: banca
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_URL=jdbc:mysql://banca_db:3306/banca_db?createDatabaseIfNotExist=true
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=root
+    command: bash -c "mvn clean package && java -jar target/*.jar"
+    depends_on:
+      - banca_db
+
+  banca_db:
+    container_name: banca_db
+    image: mysql:8.0
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root # Asegúrate de que esto tenga una contraseña segura
+      MYSQL_DATABASE: banca_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
